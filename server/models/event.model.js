@@ -26,6 +26,10 @@ const eventSchema = new Schema(
       type: String,
       required: true,
     },
+    imagePublicId: {
+      type: String,
+      required: true,
+    },
     totalTickets: {
       type: Number,
       required: true,

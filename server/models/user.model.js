@@ -19,6 +19,9 @@ const userSchema = new Schema(
     avatar: {
       type: String,
     },
+    avatarPublicId: {
+      type: String,
+    },
     role: {
       type: String,
       enum: ["user", "admin"],
@@ -43,7 +46,7 @@ userSchema.pre("save", async function () {
 });
 
 userSchema.methods.isPasswordCorrect = async function (password) {
-  return await bcrypt.commpare(password, this.password);
+  return await bcrypt.compare(password, this.password);
 };
 
 userSchema.methods.generateAccessToken = function () {

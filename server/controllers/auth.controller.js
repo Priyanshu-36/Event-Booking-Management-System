@@ -18,11 +18,14 @@ const registerUser = async (req, res) => {
   }
   const avatarLocalPath = req.file?.path;
 
-  console.log("Avatar path:", avatarLocalPath);
+  // console.log("Avatar path:", avatarLocalPath);
   // console.log(avatarLocalPath);
   let avatar;
+  let avatarPublicId;
   try {
-    avatar = await uploadOnCloudinary(avatarLocalPath);
+    const result = await uploadOnCloudinary(avatarLocalPath);
+    avatar = result.url;
+    avatarPublicId = result.public_id;
     console.log("Uploaded Avatar");
   } catch (error) {
     console.log("Error uploading avatar", error);
@@ -34,6 +37,7 @@ const registerUser = async (req, res) => {
       email,
       password,
       avatar,
+      avatarPublicId,
     });
     const createdUser = await User.findById(user._id).select("-password");
     if (!createdUser) {
@@ -97,7 +101,7 @@ const loginUser = async (req, res) => {
   if (!user) {
     throw new ApiError(400, "User not found ,Register First");
   }
-  const isPasswordValid = await user.isPasswordValid(password);
+  const isPasswordValid = await user.isPasswordCorrect(password);
 
   if (!isPasswordValid) {
     throw new ApiError(400, "Invalid credentials");
