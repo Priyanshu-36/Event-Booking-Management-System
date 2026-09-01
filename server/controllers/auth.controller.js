@@ -154,7 +154,7 @@ const verifyOTP = async (req, res) => {
     const user = await User.findOneAndUpdate(
       { email },
       { isVerified: true },
-      { new: true },
+      { returnDocument: "after" },
     );
     await Otp.deleteOne({ _id: validOtp._id });
     const verifiedUser = await User.findById(user._id).select(
