@@ -29,7 +29,7 @@ const uploadOnCloudinary = async (file) => {
 const deleteOnCloudinary = async (id) => {
   try {
     await cloudinary.uploader.destroy(id);
-    console.log("Deleted from cloudinary,Public_id: ", public_Id);
+    console.log("Deleted from cloudinary,Public_id: ", id);
   } catch (error) {
     console.log("Error in Deleting in Cloudinary", error);
     return null;

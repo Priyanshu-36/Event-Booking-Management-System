@@ -29,11 +29,13 @@ const sendBookingOTP = async (req, res) => {
 const bookEvent = async (req, res) => {
   try {
     const { eventId, otp } = req.body;
+    console.log("Process start");
     const validOTP = await Otp.findOne({
       email: req.user.email,
-      otp,
+      otp: String(otp),
       action: "book",
     });
+    console.log("Valid OTP", validOTP);
     if (!validOTP) {
       throw new ApiError(400, "Invalid OTP or expired OTP");
     }
@@ -142,11 +144,11 @@ const cancelBooking = async (req, res) => {
     ) {
       throw new ApiError(403, "You are not authorized to cancel this booking");
     }
-    if (booking.status === "cancelled") {
+    if (booking.status === "rejected") {
       throw new ApiError(400, "Booking already cancelled");
     }
     const wasConfirmed = booking.status === "confirmed";
-    booking.status = "cancelled";
+    booking.status = "rejected";
     await booking.save();
     if (wasConfirmed) {
       const event = await Event.findById(booking.eventId);

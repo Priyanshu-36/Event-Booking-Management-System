@@ -56,6 +56,7 @@ const createEvent = async (req, res) => {
     location,
     date,
     totalTickets,
+    availableTickets,
     ticketPrice,
   } = req.body;
 
@@ -65,6 +66,7 @@ const createEvent = async (req, res) => {
     !category?.trim() ||
     !location?.trim() ||
     !date ||
+    availableTickets == null ||
     totalTickets == null ||
     ticketPrice == null
   ) {
@@ -74,7 +76,7 @@ const createEvent = async (req, res) => {
   let image;
   let imagePublicId;
   try {
-    result = await uploadOnCloudinary(imageLocalPath);
+    const result = await uploadOnCloudinary(imageLocalPath);
     image = result?.url;
     imagePublicId = result?.public_id;
     console.log("Uploaded EventImage");
@@ -93,6 +95,7 @@ const createEvent = async (req, res) => {
       image,
       imagePublicId,
       totalTickets,
+      availableTickets,
       ticketPrice,
       createdBy: req.user._id,
     });
