@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import bcrypt from "bcrypt";
-import User from "./models/user.model.js";
+// import User from "./models/user.model.js";
 import Event from "./models/event.model.js";
 import Booking from "./models/booking.model.js";
 import Otp from "./models/otp.model.js";
