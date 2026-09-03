@@ -19,3 +19,13 @@ const api = axios.create({
 });
 
 export default api;
+// const formData = new FormData();
+
+// formData.append("name", name);
+// formData.append("avatar", imageFile);
+
+// await api.post("/users/update-profile", formData);
+
+// Axios/browser automatically sets:
+
+// Content-Type: multipart/form-data; boundary=....

@@ -1,6 +1,6 @@
 import React from "react";
 import AuthContext from "./authContext.js";
-import api from "../api/api.js";
+import api from "../utils/axios.js";
 
 const AuthProvider = ({ children }) => {
   // Stores the currently logged-in user's information.
