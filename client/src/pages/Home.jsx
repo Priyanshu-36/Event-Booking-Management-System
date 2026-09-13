@@ -4,7 +4,7 @@ import AuthContext from "../context/authContext.js";
 import { useState, useEffect } from "react";
 import {
   FaCalendar,
-  FaMapMarker,
+  FaMapMarkerAlt,
   FaSearch,
   FaTicketAlt,
   FaShieldAlt,
