@@ -2,30 +2,47 @@ import axios from "axios";
 
 // Create one Axios instance for communicating with our backend
 const api = axios.create({
-  // Base URL of our backend
-  // So api.post("/login") becomes:
-  // http://localhost:5001/api/v1/login
   baseURL: "http://localhost:5001/api/v1",
-
-  // VERY IMPORTANT when using cookies for authentication.
-  // This tells the browser to send cookies with requests
-  // to our backend.
   withCredentials: true,
-
-  // Tell backend that we are sending JSON data
   headers: {
     "Content-Type": "application/json",
   },
 });
 
+// Handle expired access token
+api.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+
+  async (error) => {
+    const originalRequest = error.config;
+
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !originalRequest.url?.includes("/auth/refresh-token")
+    ) {
+      // Prevent infinite retry loop
+      originalRequest._retry = true;
+
+      try {
+        // Refresh token is automatically sent as a cookie
+        await api.post("/auth/refresh-token");
+
+        // Retry the original request with the new access token
+        return api(originalRequest);
+      } catch (refreshError) {
+        // Refresh token is invalid/expired
+        window.dispatchEvent(new Event("auth:logout"));
+        //It creates a browser event called: auth: logout;
+        return Promise.reject(refreshError);
+      }
+    }
+
+    return Promise.reject(error);
+    //passes the error forward.
+  },
+);
+
 export default api;
-// const formData = new FormData();
-
-// formData.append("name", name);
-// formData.append("avatar", imageFile);
-
-// await api.post("/users/update-profile", formData);
-
-// Axios/browser automatically sets:
-
-// Content-Type: multipart/form-data; boundary=....

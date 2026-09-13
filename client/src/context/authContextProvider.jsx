@@ -3,46 +3,25 @@ import AuthContext from "./authContext.js";
 import api from "../utils/axios.js";
 
 const AuthProvider = ({ children }) => {
-  // Stores the currently logged-in user's information.
-  //
-  // Initially there is no user.
-  // Example:
-  // user = {
-  //   _id: "123",
-  //   name: "Priyanshu",
-  //   email: "abc@gmail.com"
-  // }
   const [user, setUser] = React.useState(null);
-
-  // Used while the application is checking
-  // whether a user was already logged in.
-  //
-  // true  -> still checking
-  // false -> checking completed
   const [loading, setLoading] = React.useState(true);
 
-  // Runs once when AuthProvider is mounted.
   React.useEffect(() => {
-    // Get previously stored user information.
-    //
-    // IMPORTANT:
-    // We are NOT storing the JWT token here.
-    // We only store user information.
     const storedUser = localStorage.getItem("userInfo");
-
-    // If user information exists in localStorage,
-    // convert JSON string back into a JavaScript object.
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
-
-    // We have finished checking localStorage.
     setLoading(false);
+    const handleAuthLogout = () => {
+      setUser(null);
+      localStorage.removeItem("userInfo");
+    };
+    //Whenever the browser receives an auth:logout event, execute handleAuthLogout
+    window.addEventListener("auth:logout", handleAuthLogout);
+    return () => {
+      window.removeEventListener("auth:logout", handleAuthLogout);
+    };
   }, []);
-
-  // =========================================================
-  // LOGIN
-  // =========================================================
 
   const login = async (email, password) => {
     try {
@@ -107,10 +86,6 @@ const AuthProvider = ({ children }) => {
     }
   };
 
-  // =========================================================
-  // REGISTER
-  // =========================================================
-
   const register = async (name, email, password) => {
     try {
       // Send registration data to backend.
@@ -129,11 +104,6 @@ const AuthProvider = ({ children }) => {
       throw error.response?.data?.message || "Registration failed";
     }
   };
-
-  // =========================================================
-  // VERIFY OTP
-  // =========================================================
-
   const verifyOTP = async (email, otp) => {
     try {
       // Send OTP to backend.
@@ -165,10 +135,6 @@ const AuthProvider = ({ children }) => {
     }
   };
 
-  // =========================================================
-  // LOGOUT
-  // =========================================================
-
   const logout = async () => {
     try {
       // Tell backend that the user wants to logout.
@@ -191,23 +157,14 @@ const AuthProvider = ({ children }) => {
     }
   };
 
-  // =========================================================
-  // PROVIDE AUTH DATA TO ENTIRE APPLICATION
-  // =========================================================
-
   return (
     <AuthContext.Provider
       value={{
-        // Current logged-in user
         user,
-
-        // Authentication functions
         login,
         logout,
         register,
         verifyOTP,
-
-        // Used to know whether auth restoration is complete
         loading,
       }}
     >

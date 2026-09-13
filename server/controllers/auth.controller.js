@@ -191,36 +191,59 @@ const logoutUser = async (req, res) => {
     .json(new ApiResponse(200, {}, "User logged Out "));
 };
 
-const refreshAccessToken =async (req, res) => {
-  const incomingRefreshToken =
-    req.cookies.refreshToken || req.body.refreshToken;
+const refreshAccessToken = async (req, res) => {
+  // Read refresh token from the HTTP-only cookie.
+  //
+  // We keep req.body fallback only if you intentionally
+  // want to support sending refreshToken in request body.
+  const incomingRefreshToken = req.cookies.refreshToken;
 
   if (!incomingRefreshToken) {
-    throw new ApiError(400, "Refreesh Token is required");
+    throw new ApiError(401, "Refresh token is required");
   }
 
   try {
+    // Verify whether the refresh token JWT is valid
+    // and whether it has expired.
     const decodedToken = jwt.verify(
       incomingRefreshToken,
       process.env.REFRESH_TOKEN_SECRET,
     );
+
+    // Find the user mentioned inside the refresh token.
     const user = await User.findById(decodedToken?._id);
+
     if (!user) {
-      throw new ApiError(400, "Invalid Refresh Token");
+      throw new ApiError(401, "Invalid refresh token");
     }
 
-    if (incomingRefreshToken !== user?.refreshToken) {
-      throw new ApiError(400, "Invalid Refresh Tooken from db");
+    // Compare the incoming refresh token with the token
+    // stored in the database.
+    //
+    // This allows us to invalidate refresh tokens during logout
+    // or token rotation.
+    if (incomingRefreshToken !== user.refreshToken) {
+      throw new ApiError(401, "Refresh token does not match database");
     }
 
+    // Cookie options.
     const options = {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
     };
 
-    const { accessToken, refreshToken: newRefreshToken } =
-      await GenerateAccessAndRefreshToken(user?._id);
+    // Generate a new access token and a new refresh token.
+    //
+    // This function should also update the new refresh token
+    // in the user's database record.
+    const {
+      accessToken,
+      refreshToken: newRefreshToken,
+    } = await GenerateAccessAndRefreshToken(user._id);
 
+    // Set both new tokens in cookies.
+    //
+    // The browser stores them automatically.
     return res
       .status(200)
       .cookie("accessToken", accessToken, options)
@@ -228,12 +251,16 @@ const refreshAccessToken =async (req, res) => {
       .json(
         new ApiResponse(
           200,
-          { accessToken, refreshToken: newRefreshToken },
-          "Access Token refreshed successfully",
+          {}, // No need to send tokens in JSON
+          "Access token refreshed successfully",
         ),
       );
+
   } catch (error) {
-    throw new ApiError(400, error?.message || "Invalid refresh token");
+    throw new ApiError(
+      401,
+      error?.message || "Invalid or expired refresh token",
+    );
   }
 };
 
