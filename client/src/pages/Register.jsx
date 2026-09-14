@@ -6,9 +6,9 @@ function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [avatar, setAvatar] = useState(null);
   const [otp, setOtp] = useState("");
   const [showOTP, setShowOTP] = useState(false);
-  //showOTP is a state variable that controls whether the OTP verification section should be displayed and which step of registration the user is currently on.
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -20,7 +20,15 @@ function Register() {
     setLoading(true);
     try {
       if (!showOTP) {
-        await register(name, email, password);
+        const formData = new FormData();
+        formData.append("name", name);
+        formData.append("email", email);
+        formData.append("password", password);
+        if (avatar) {
+          formData.append("avatar", avatar);
+        }
+
+        await register(formData);
         setShowOTP(true);
         setError("");
       } else {
@@ -28,7 +36,9 @@ function Register() {
         navigate("/login");
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Something went wrong");
+      setError(
+        err.response?.data?.message || err.message || "Something went wrong",
+      );
     } finally {
       setLoading(false);
     }
@@ -86,6 +96,17 @@ function Register() {
                 className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-700 transition shadow-sm"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Profile Image (optional)
+              </label>
+              <input
+                type="file"
+                accept="image/*"
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-700 transition shadow-sm file:mr-4 file:rounded file:border-0 file:bg-gray-900 file:text-white file:px-3 file:py-2"
+                onChange={(e) => setAvatar(e.target.files?.[0] || null)}
               />
             </div>
           </>

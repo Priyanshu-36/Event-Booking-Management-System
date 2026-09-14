@@ -1,5 +1,4 @@
-import React from "react";
-import React, { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../utils/axios.js";
 import AuthContext from "../context/authContext.js";
@@ -25,8 +24,9 @@ function EventDetails() {
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const { data } = await api.get(`/events/${id}`);
-        setEvent(data);
+        const response = await api.get(`/events/${id}`);
+        const payload = response?.data?.data ?? response?.data ?? null;
+        setEvent(payload);
       } catch (err) {
         setError("Failed to load event details.");
       } finally {
@@ -53,7 +53,7 @@ function EventDetails() {
           "OTP sent to your email. Please verify to confirm booking.",
         );
       } else {
-        await api.post("/book", { eventId: event._id, otp });
+        await api.post("/bookings/book", { eventId: event._id, otp });
         setSuccessMsg("Booking requested! Awaiting admin confirmation.");
         setShowOTP(false);
         // Update local seats count dynamically after booking

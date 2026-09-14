@@ -27,16 +27,9 @@ const AuthProvider = ({ children }) => {
     try {
       // Send email and password to backend.
       //
-      // Backend:
-      // POST /login
-      //
-      // Backend will:
-      // 1. Verify email/password
-      // 2. Generate access token
-      // 3. Generate refresh token
-      // 4. Store tokens in cookies
-      // 5. Send user data in response
-      const response = await api.post("/login", {
+      // Backend route:
+      // POST /api/v1/auth/login
+      const response = await api.post("/auth/login", {
         email,
         password,
       });
@@ -86,19 +79,14 @@ const AuthProvider = ({ children }) => {
     }
   };
 
-  const register = async (name, email, password) => {
+  const register = async (formData) => {
     try {
-      // Send registration data to backend.
-      const response = await api.post("/auth/register", {
-        name,
-        email,
-        password,
+      const response = await api.post("/auth/register", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
 
-      // Because backend uses ApiResponse:
-      //
-      // response.data       -> ApiResponse
-      // response.data.data  -> actual backend data
       return response.data.data;
     } catch (error) {
       throw error.response?.data?.message || "Registration failed";
@@ -106,14 +94,9 @@ const AuthProvider = ({ children }) => {
   };
   const verifyOTP = async (email, otp) => {
     try {
-      // Send OTP to backend.
-      //
-      // Backend verifies the OTP.
-      //
-      // If verification is successful,
-      // backend can generate tokens and send them
-      // as cookies.
-      const response = await api.post("/auth/verify-otp", {
+      // Backend route:
+      // POST /api/v1/auth/verifyOTP
+      const response = await api.post("/auth/verifyOTP", {
         email,
         otp,
       });
@@ -137,12 +120,9 @@ const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      // Tell backend that the user wants to logout.
-      //
-      // Backend will:
-      // 1. Clear refresh token from database
-      // 2. Clear authentication cookies
-      await api.post("/logout");
+      // Backend route:
+      // POST /api/v1/auth/logout
+      await api.post("/auth/logout");
     } catch (error) {
       console.error("Logout failed:", error);
     } finally {

@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import AuthContext from "../context/authContext.js";
 import { useState, useEffect } from "react";
 import {
-  FaCalendar,
+  FaCalendarAlt,
   FaMapMarkerAlt,
   FaSearch,
   FaTicketAlt,
@@ -25,10 +25,12 @@ function Home() {
 
   const fetchEvents = async () => {
     try {
-      const { data } = await api.get(`/events?search=${search}`);
-      setEvents(data);
+      const response = await api.get(`/events?search=${search}`);
+      const payload = response?.data?.data ?? response?.data ?? [];
+      setEvents(Array.isArray(payload) ? payload : []);
     } catch (error) {
       console.error("Error fetching events:", error);
+      setEvents([]);
     } finally {
       setLoading(false);
     }

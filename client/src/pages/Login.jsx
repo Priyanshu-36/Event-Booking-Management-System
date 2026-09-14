@@ -1,4 +1,3 @@
-import React from 'react'
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AuthContext from "../context/authContext.js";
@@ -23,11 +22,11 @@ function Login() {
       if (!showOTP) {
         const data = await login(email, password);
         if (data.role === "admin") navigate("/admin");
-        else navigate("/dashboard");
+        else navigate("/");
       } else {
         const data = await verifyOTP(email, otp);
         if (data.role === "admin") navigate("/admin");
-        else navigate("/dashboard");
+        else navigate("/");
       }
     } catch (err) {
       if (err.needsVerification) {
@@ -128,4 +127,4 @@ function Login() {
   );
 }
 
-export default Login
+export default Login;

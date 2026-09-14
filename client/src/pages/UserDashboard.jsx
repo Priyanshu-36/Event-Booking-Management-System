@@ -1,6 +1,5 @@
-import React from "react";
 import React, { useState, useEffect, useContext } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import api from "../utils/axios.js";
 import AuthContext from "../context/authContext.js";
 import { FaTicketAlt, FaTimesCircle } from "react-icons/fa";
@@ -21,8 +20,8 @@ function UserDashboard() {
 
   const fetchBookings = async () => {
     try {
-      const { data } = await api.get("/my-bookings");
-      setBookings(data);
+      const { data } = await api.get("/bookings/my-bookings");
+      setBookings(data.data || data);
     } catch (error) {
       console.error("Error fetching bookings", error);
     } finally {
@@ -35,7 +34,7 @@ function UserDashboard() {
       window.confirm("Are you sure you want to cancel this booking request?")
     ) {
       try {
-        await api.delete(`/cancel/${id}`);
+        await api.delete(`/bookings/cancel/${id}`);
         fetchBookings();
       } catch (error) {
         alert(error.response?.data?.message || "Error cancelling booking");
