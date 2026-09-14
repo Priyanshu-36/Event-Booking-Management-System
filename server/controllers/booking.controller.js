@@ -29,13 +29,13 @@ const sendBookingOTP = async (req, res) => {
 const bookEvent = async (req, res) => {
   try {
     const { eventId, otp } = req.body;
-    console.log("Process start");
+    // console.log("Process start");
     const validOTP = await Otp.findOne({
       email: req.user.email,
       otp: String(otp),
       action: "book",
     });
-    console.log("Valid OTP", validOTP);
+    // console.log("Valid OTP", validOTP);
     if (!validOTP) {
       throw new ApiError(400, "Invalid OTP or expired OTP");
     }

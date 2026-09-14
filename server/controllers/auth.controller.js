@@ -23,13 +23,17 @@ const registerUser = async (req, res) => {
   let avatar;
   let avatarPublicId;
   try {
-    const result = await uploadOnCloudinary(avatarLocalPath);
-    avatar = result.url;
-    avatarPublicId = result.public_id;
-    console.log("Uploaded Avatar");
+    if (avatarLocalPath) {
+      const result = await uploadOnCloudinary(avatarLocalPath);
+      if (result?.url) {
+        avatar = result.url;
+        avatarPublicId = result.public_id;
+        console.log("Uploaded Avatar");
+      }
+    }
   } catch (error) {
     console.log("Error uploading avatar", error);
-    throw new ApiError(500, "Failed to upload avater");
+    throw new ApiError(500, "Failed to upload avatar");
   }
   try {
     const user = await User.create({
@@ -175,7 +179,7 @@ const logoutUser = async (req, res) => {
       },
     },
     {
-      new: true,
+      returnDocument: "after",
     },
   );
 
@@ -236,10 +240,8 @@ const refreshAccessToken = async (req, res) => {
     //
     // This function should also update the new refresh token
     // in the user's database record.
-    const {
-      accessToken,
-      refreshToken: newRefreshToken,
-    } = await GenerateAccessAndRefreshToken(user._id);
+    const { accessToken, refreshToken: newRefreshToken } =
+      await GenerateAccessAndRefreshToken(user._id);
 
     // Set both new tokens in cookies.
     //
@@ -255,7 +257,6 @@ const refreshAccessToken = async (req, res) => {
           "Access token refreshed successfully",
         ),
       );
-
   } catch (error) {
     throw new ApiError(
       401,
