@@ -314,7 +314,7 @@ const AdminDashboard = () => {
             All Events
           </h2>
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            <ul className="divide-y divide-gray-100 max-h-[600px] overflow-y-auto">
+            <ul className="divide-y divide-gray-100 max-h-150 overflow-y-auto">
               {events.length === 0 ? (
                 <li className="p-6 text-gray-500 text-center">
                   No events created yet.
@@ -448,7 +448,7 @@ const AdminDashboard = () => {
                           onClick={() =>
                             handleConfirmBooking(booking._id, "paid")
                           }
-                          className="flex-1 min-w-[120px] bg-green-50 text-green-700 hover:bg-green-600 hover:text-white border border-green-200 text-xs font-bold py-2.5 px-3 rounded-lg shadow-sm transition"
+                          className="flex-1 min-w-30 bg-green-50 text-green-700 hover:bg-green-600 hover:text-white border border-green-200 text-xs font-bold py-2.5 px-3 rounded-lg shadow-sm transition"
                         >
                           ✓ Approve as Paid
                         </button>
@@ -456,13 +456,13 @@ const AdminDashboard = () => {
                           onClick={() =>
                             handleConfirmBooking(booking._id, "not_paid")
                           }
-                          className="flex-1 min-w-[120px] bg-gray-50 text-gray-700 hover:bg-gray-800 hover:text-white border border-gray-200 text-xs font-bold py-2.5 px-3 rounded-lg shadow-sm transition"
+                          className="flex-1 min-w-30 bg-gray-50 text-gray-700 hover:bg-gray-800 hover:text-white border border-gray-200 text-xs font-bold py-2.5 px-3 rounded-lg shadow-sm transition"
                         >
                           ✓ Approve Undecided
                         </button>
                         <button
                           onClick={() => handleCancelBooking(booking._id)}
-                          className="w-[80px] bg-red-50 text-red-600 hover:bg-red-500 hover:text-white border border-red-200 text-xs font-bold py-2.5 px-3 rounded-lg transition"
+                          className="w-20 bg-red-50 text-red-600 hover:bg-red-500 hover:text-white border border-red-200 text-xs font-bold py-2.5 px-3 rounded-lg transition"
                         >
                           ✕ Reject
                         </button>
