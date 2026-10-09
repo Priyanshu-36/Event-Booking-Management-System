@@ -13,9 +13,4 @@ connectDB().then(() => {
   });
 });
 
-app.get("/health", (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: "Eventora backend is healthy",
-  });
-});
+

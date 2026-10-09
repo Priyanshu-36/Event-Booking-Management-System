@@ -11,6 +11,13 @@ app.use(
   }),
 );
 
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "Eventora backend is healthy",
+  });
+});
+
 //common middleware
 app.use(express.json({ limit: "50mb" })); //Parses incoming JSON request body
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
