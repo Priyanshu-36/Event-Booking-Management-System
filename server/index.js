@@ -13,6 +13,9 @@ connectDB().then(() => {
   });
 });
 
-app.get("/", (req, res) => {
-  res.status(200).json({ message: "Server is running" });
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "Eventora backend is healthy",
+  });
 });
