@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Create one Axios instance for communicating with our backend
 const api = axios.create({
-  baseURL: "http://localhost:5001/api/v1",
+  baseURL: "https://d1dfg49q2igolu.cloudfront.net/api/v1",
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
